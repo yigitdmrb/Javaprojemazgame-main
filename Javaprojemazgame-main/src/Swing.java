@@ -61,12 +61,9 @@ public class Swing {
             }
 
         }
-
-
         window.add(buttons);
         window.add(trees);
         window.add(trees2);
-
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {//buton1 e tıklandığında olucaklar
