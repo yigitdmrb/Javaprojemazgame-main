@@ -13,7 +13,7 @@ public class Gamewindow extends JFrame {
         window.setResizable(false);//ekran boyutunu değiştirmeyi engeller
 
 
-        Forest forest = new Forest("Javaprojemazgame-main/src/Images/wall_vines_6.png");
+        Forest forest = new Forest("Javaprojemazgame-main/src/Images/snake_2.png");
         forest.setSize(525,384);
         forest.requestFocus();//klavyeden islemleri algılaması için focus isteği
         forest.addKeyListener(forest);
