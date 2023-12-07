@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.EventListener;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Forest extends JPanel implements KeyListener, EventListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
     static class TreesCoordinate{
@@ -16,19 +17,26 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
             this.x=x; this.y=y;
         }
     }
+    ArrayList<TreesCoordinate> treesCoordinates = new ArrayList<TreesCoordinate>();
 
     final private BufferedImage tree;
     final private BufferedImage characterimg;
-    static int characterx =45;
-    static int charactery =0;
+    final private BufferedImage floorimg;
+    static int characterx =32;
+    static int charactery =32;
     static int[] nottree= new int[5];
-
-    TreesCoordinate[] treesCoordinates = new TreesCoordinate[25];
+    {
+        try {
+            floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mesh_3_old.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     {
         try {
-            characterimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/character.png"));
+            characterimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/demigod_male.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +52,6 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
         Random rnd = new Random();
         for (int k = 0; k < 5; k++) {
             nottree[k]= rnd.nextInt(1,5); }
-
     }
     @Override
     public void keyTyped(KeyEvent e) {
@@ -55,31 +62,45 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     public void keyPressed(KeyEvent e) {
         int pressedKey= e.getKeyCode();
         if (pressedKey==KeyEvent.VK_LEFT) {
-            characterx -= tree.getWidth();
+            characterx -= tree.getWidth()/8;
         }
         else if (pressedKey==KeyEvent.VK_RIGHT) {
-            characterx += tree.getWidth();
+            characterx += tree.getWidth()/8;
         }
         else if (pressedKey==KeyEvent.VK_DOWN) {
-            charactery+=tree.getHeight();
+            charactery+=tree.getHeight()/8;
+        }
+        else if (pressedKey==KeyEvent.VK_UP) {
+            charactery-=tree.getHeight()/8;
         }
 
         if (checkCollision()) {
             // Çakışma durumunda karakterin konumunu eski konumuna geri al
-            if (pressedKey == KeyEvent.VK_LEFT) {
-                characterx += tree.getWidth();
-            } else if (pressedKey == KeyEvent.VK_RIGHT) {
-                characterx -= tree.getWidth();
-            } else if (pressedKey == KeyEvent.VK_DOWN) {
-                charactery -= tree.getHeight();
+            if (pressedKey==KeyEvent.VK_LEFT) {
+                characterx += tree.getWidth()/8;
+            }
+            else if (pressedKey==KeyEvent.VK_RIGHT) {
+                characterx -= tree.getWidth()/8;
+            }
+            else if (pressedKey==KeyEvent.VK_DOWN) {
+                charactery-=tree.getHeight()/8;
+            }
+            else if (pressedKey==KeyEvent.VK_UP) {
+                charactery+=tree.getHeight()/8;
             }
         }
         repaint();
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
         Rectangle characterRect = new Rectangle(characterx, charactery, characterimg.getWidth(), characterimg.getHeight());
-        Rectangle treeRect = new Rectangle(15, 30, tree.getWidth(), tree.getHeight());
-        return characterRect.intersects(treeRect);
+        for (TreesCoordinate coordinatetree : treesCoordinates) {
+            Rectangle treeRect = new Rectangle(coordinatetree.x, coordinatetree.y, tree.getWidth(), tree.getHeight());
+            if (treeRect.intersects(characterRect)) {
+                return true; // Çakışma durumu
+            }
+        }
+        return false; // Çakışma yok
+
     }
     @Override
     public void keyReleased(KeyEvent e) {
@@ -88,16 +109,26 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
-
-        for (int k = 0; k <= 4; k++) {
-
-            for (int i = 1; i <= 4; i++) {
-                if (i == nottree[k])
-                    g.fillOval(15 + i * tree.getWidth(), 30+k*tree.getHeight()*2, tree.getWidth(), tree.getHeight());
+        int[][] labirentMatrisi = {
+                {1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1},
+                {1,0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0,1},
+                {1,0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0,1},
+                {1,0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0,1},
+                {1,0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0,1},
+                {1,1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,1},
+                {1,0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0,1},
+                {1,0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,1},
+                {1,0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0,1},
+                {1,1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,1},
+                {1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1},
+        };
+        for (int k = 0; k < 11; k++) {
+            for (int i = 0; i < 16; i++) {
+                if (labirentMatrisi[k][i]==0)
+                    g.drawImage(floorimg, i * tree.getWidth(),  k * tree.getHeight(), this);
                 else {
-                    g.drawImage(tree, 15 + i * tree.getWidth(), 30 + k * tree.getHeight() * 2, this);
-
+                    g.drawImage(tree, i * tree.getWidth(),  k * tree.getHeight(), this);
+                    treesCoordinates.add(new TreesCoordinate(i * tree.getWidth(),k * tree.getHeight()));
                 }
             }
             g.drawImage(characterimg,characterx,charactery,this);

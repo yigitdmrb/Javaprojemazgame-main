@@ -6,15 +6,15 @@ public class Gamewindow extends JFrame {
     public static void main(String[] args) {
         Gamewindow window = new Gamewindow();//pencere nesnesi ve contructda baslık gönderiliyor
         window.setTitle("Maze Game");
-        window.setSize(500,550);//pencere boyutu
+        window.setSize(525,384);//pencere boyutu
         window.setLocation(400,150);//sol üst köşeye olan uzaklık
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);// çarpıya baasınca programı sonlandırır
         window.setFocusable(false);
         window.setResizable(false);//ekran boyutunu değiştirmeyi engeller
 
 
-        Forest forest = new Forest("Javaprojemazgame-main/src/Images/tree_icon2.png");
-        forest.setSize(500,300);
+        Forest forest = new Forest("Javaprojemazgame-main/src/Images/wall_vines_6.png");
+        forest.setSize(525,384);
         forest.requestFocus();//klavyeden islemleri algılaması için focus isteği
         forest.addKeyListener(forest);
         forest.setFocusable(true);
