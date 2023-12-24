@@ -1,5 +1,4 @@
 import javax.swing.*;//tüm swing kütüphaneleri eklendi swing arayüz için
-import java.awt.*;//bu nerden geldi bilmiyom ama lazım sanırım slşkdsldfsfdkş
 
 
 public class Gamewindow extends JFrame {

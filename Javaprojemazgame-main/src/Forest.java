@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.EventListener;
 import java.util.Random;
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Forest extends JPanel implements KeyListener, EventListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
     static class WallCoordinate {
@@ -18,9 +20,10 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
         }
     }
     ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();
-  static Enemies[] enemies = new Enemies[7];
+  static ArrayList<Enemy> enemies = new ArrayList<>();
 
     final private BufferedImage wall;
+    static int[][] labirentMatrisi;
     final private BufferedImage characterimg;
     final private BufferedImage floorimg;
     static int characterx =32;
@@ -53,14 +56,26 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
         Random rnd = new Random();
         for (int k = 0; k < 5; k++) {
             nottree[k]= rnd.nextInt(1,5); }
-        enemies[0]=new Enemies("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",5,3,10,"Saman Trol");
-        enemies[1]=new Enemies("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",5,3,10,"Halfing");
-        enemies[2]=new Enemies("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",5,3,10,"Dev");
-        enemies[3]=new Enemies("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",5,3,10,"Kaya Trol");
-        enemies[4]=new Enemies("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",5,3,10,"Salamander");
-        enemies[5]=new Enemies("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",5,3,10,"Ejderha");
-        enemies[6]=new Enemies("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",5,3,10,"Tas Dev");
-
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",5,3,10,"Saman Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",5,3,10,"Halfing"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",5,3,10,"Dev"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",5,3,10,"Kaya Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",5,3,10,"Salamander"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",5,3,10,"Ejderha"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",5,3,10,"Tas Dev"));
+        labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                {1, 0, 0, 0, 2, 0, 1, 1, 0, 0, 0, 1, 1, 1, 2, 1},
+                {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1},
+                {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1},
+                {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 2, 0, 1},
+                {1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1},
+                {1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 0, 1, 0, 1},
+                {1, 2, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                {1, 1, 1, 1, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        };
 
     }
     @Override
@@ -103,13 +118,84 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
         Rectangle characterRect = new Rectangle(characterx, charactery, characterimg.getWidth(), characterimg.getHeight());
-        for (WallCoordinate coordinatetree : wallCoordinates) {
-            Rectangle wallRect = new Rectangle(coordinatetree.x, coordinatetree.y, wall.getWidth(), wall.getHeight());
+        for (WallCoordinate coordinatwall : wallCoordinates) {
+            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth(), wall.getHeight());
             if (wallRect.intersects(characterRect)) {
                 return true; // Çakışma durumu
             }
+            else{//dusmanla cakısma kontrol
+                for (Enemy enemy : enemies)
+                {
+                   Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,32,32);
+                   if (enemyRect.intersects(characterRect)) {
+                       fight(enemy);
+                       return true;
+                   }
+
+                }
+            }
         }
         return false; // Çakışma yok
+
+    }
+    public void fight(Enemy enemy){  // Create a custom panel with BoxLayout (vertical)
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1));
+
+        // Add the image to the panel
+        JLabel imageLabel = new JLabel(new ImageIcon(enemy.enemyimg));
+        panel.add(imageLabel);
+
+        // Add the text information to the panel
+        String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
+        message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
+        message += "Sağlık: " + enemy.health +"<br>";
+        message += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+        message += "Savunma: " + enemy.defense + "<br></div></html>";
+
+        JLabel textLabel = new JLabel(message);
+        textLabel.setForeground(Color.white);
+        panel.add(textLabel);
+
+        // Add attack and defense buttons
+        JButton attackButton = new MyJButton("Saldır");
+        JButton defenseButton = new MyJButton("Savun");
+
+        attackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Saldırı butonuna tıklanınca düşmanın sağlığını 2 azalt
+                enemy.health -= 2;
+
+                // Düşmanın sağlığı negatif olmasın
+                if (enemy.health < 0) {
+                    enemy.health = 0;
+                }
+
+                // Saldırı sonrası güncellenmiş bilgileri göster
+                String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
+                updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
+                updatedMessage += "Sağlık: " + enemy.health +"<br>";
+                updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+                updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
+
+                textLabel.setText(updatedMessage);
+            }
+        });
+
+        defenseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Handle defense button click
+                // You can implement your defense logic here
+            }
+        });
+
+        panel.add(attackButton);
+        panel.add(defenseButton);
+        panel.setBackground(Color.black);
+        // Show the custom panel in the JOptionPane
+        JOptionPane.showMessageDialog(this, panel, "Battle!", JOptionPane.PLAIN_MESSAGE);
 
     }
     @Override
@@ -119,32 +205,30 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        int[][] labirentMatrisi = { //0 lar yol 1 ler duvar olucak
-                {1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1},
-                {1,0, 0, 0, 2, 0, 1, 1, 0, 0, 0, 1, 1, 1, 2,1},
-                {1,0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0,1},
-                {1,0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0,1},
-                {1,0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 2, 0,1},
-                {1,1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,1},
-                {1,0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 0, 1, 0,1},
-                {1,2, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,1},
-                {1,0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0,1},
-                {1,1, 1, 1, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0,1},
-                {1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1},
-        };
+
         int sayac=0;
         for (int k = 0; k < 11; k++) {
             for (int i = 0; i < 16; i++) {
                 if (labirentMatrisi[k][i]==0)
                     g.drawImage(floorimg, i * 32,  k * 32, this);
-                else if(labirentMatrisi[k][i]==1){
-                    g.drawImage(wall, i * 32,  k * 32, this);
-                    wallCoordinates.add(new WallCoordinate(i * 32,k * 32));
+                else if(labirentMatrisi[k][i]==2){
+                    g.drawImage(floorimg, i * 32,  k * 32, this);
+                    if(enemies.get(sayac).health!=0){
+                        g.drawImage(enemies.get(sayac).enemyimg, i * 32,  k * 32, this);
+                        enemies.get(sayac).coordinatex=i * 32; enemies.get(sayac).coordinatey=k * 32;
+                    }
+                    else {
+                        labirentMatrisi[k][i]=0;
+                        enemies.remove(enemies.get(sayac));
+                        sayac--;
+                        repaint();
+                    }
+                    sayac++;
+
                 }
                 else{
-                    g.drawImage(floorimg, i * 32,  k * 32, this);
-                    g.drawImage(enemies[sayac].enemyimg, i * 32,  k * 32, this);
-                    sayac++;
+                    g.drawImage(wall, i * 32,  k * 32, this);
+                    wallCoordinates.add(new WallCoordinate(i * 32,k * 32));
                 }
             }
             g.drawImage(characterimg,characterx,charactery,this);
