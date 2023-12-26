@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Forest extends JPanel implements KeyListener, EventListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
+public class Maze extends JPanel implements KeyListener, EventListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -29,24 +29,17 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     static int characterx =32;
     static int charactery =32;
     static int[] nottree= new int[5];
-    {
-        try {
+
+    { try {
+            characterimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/demigod_male.png"));
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    {
-        try {
-            characterimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/demigod_male.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-    }
 
-    Forest(String filedirectory)  {
+
+    Maze(String filedirectory)  {
         try {
             this.wall =ImageIO.read(new FileInputStream(filedirectory));
         } catch (IOException e) {
@@ -119,7 +112,7 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
         Rectangle characterRect = new Rectangle(characterx, charactery, characterimg.getWidth(), characterimg.getHeight());
         for (WallCoordinate coordinatwall : wallCoordinates) {
-            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth(), wall.getHeight());
+            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth()-4, wall.getHeight()-4);
             if (wallRect.intersects(characterRect)) {
                 return true; // Çakışma durumu
             }
@@ -138,15 +131,11 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
         return false; // Çakışma yok
 
     }
-    public void fight(Enemy enemy){  // Create a custom panel with BoxLayout (vertical)
-        JPanel panel = new JPanel();
+    public void fight(Enemy enemy){
+        JFrame panel = new JFrame();//savas ekranı
         panel.setLayout(new GridLayout(2, 1));
-
-        // Add the image to the panel
         JLabel imageLabel = new JLabel(new ImageIcon(enemy.enemyimg));
         panel.add(imageLabel);
-
-        // Add the text information to the panel
         String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
         message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
         message += "Sağlık: " + enemy.health +"<br>";
@@ -157,7 +146,6 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
         textLabel.setForeground(Color.white);
         panel.add(textLabel);
 
-        // Add attack and defense buttons
         JButton attackButton = new MyJButton("Saldır");
         JButton defenseButton = new MyJButton("Savun");
 
@@ -170,6 +158,8 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
                 // Düşmanın sağlığı negatif olmasın
                 if (enemy.health < 0) {
                     enemy.health = 0;
+                    Gamewindow.maze.setFocusable(true);
+                   panel.dispose();
                 }
 
                 // Saldırı sonrası güncellenmiş bilgileri göster
@@ -183,20 +173,22 @@ public class Forest extends JPanel implements KeyListener, EventListener {//mapi
             }
         });
 
-        defenseButton.addActionListener(new ActionListener() {
+        defenseButton.addActionListener(new ActionListener() { //savunma butonu
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle defense button click
-                // You can implement your defense logic here
+
             }
         });
 
         panel.add(attackButton);
         panel.add(defenseButton);
-        panel.setBackground(Color.black);
-        // Show the custom panel in the JOptionPane
-        JOptionPane.showMessageDialog(this, panel, "Battle!", JOptionPane.PLAIN_MESSAGE);
-
+        panel.getContentPane().setBackground(Color.black);
+        panel.setLocation(400,150);
+        panel.setSize(500,250);
+        panel.setFocusable(true);
+        Gamewindow.maze.setFocusable(false);//arkada kalan ekranda islem yapılmasını engelliyor
+        panel.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);//sekmeyi kapatmayı engelleme
+        panel.setVisible(true);
     }
     @Override
     public void keyReleased(KeyEvent e) {

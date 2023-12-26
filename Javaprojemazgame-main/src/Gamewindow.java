@@ -2,8 +2,9 @@ import javax.swing.*;//tüm swing kütüphaneleri eklendi swing arayüz için
 
 
 public class Gamewindow extends JFrame {
+    static Maze maze ;
     public static void main(String[] args) {
-        Gamewindow window = new Gamewindow();//pencere nesnesi ve contructda baslık gönderiliyor
+        Gamewindow window = new Gamewindow();//pencere nesnesi
         window.setTitle("Maze Game");
         window.setSize(525,384);//pencere boyutu
         window.setLocation(400,150);//sol üst köşeye olan uzaklık
@@ -11,14 +12,17 @@ public class Gamewindow extends JFrame {
         window.setFocusable(false);
         window.setResizable(false);//ekran boyutunu değiştirmeyi engeller
 
-
-        Forest forest = new Forest("Javaprojemazgame-main/src/Images/snake_2.png");
-        forest.setSize(525,384);
-        forest.requestFocus();//klavyeden islemleri algılaması için focus isteği
-        forest.addKeyListener(forest);
-        forest.setFocusable(true);
-        forest.setFocusTraversalKeysEnabled(false);
-        window.add(forest);
+        Maze maze = new Maze("Javaprojemazgame-main/src/Images/snake_2.png");
+        maze.setSize(525,384);
+        maze.requestFocus();//klavyeden islemleri algılaması için focus isteği
+        maze.addKeyListener(maze);
+        maze.setFocusable(true);
+        maze.setFocusTraversalKeysEnabled(false);
+        window.add(maze);
+        window.mazeTanimlama(maze);
         window.setVisible(true);//pencere gözükmesi için yazılmazsa programı göremeyiz
+    }
+    void mazeTanimlama(Maze maze){
+        Gamewindow.maze =maze;
     }
 }
