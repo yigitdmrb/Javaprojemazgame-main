@@ -1,6 +1,5 @@
-import javax.swing.*;//tüm swing kütüphaneleri eklendi swing arayüz için
-
-
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 public class Gamewindow extends JFrame {
     static Maze maze ;
     public static void main(String[] args) {
@@ -23,6 +22,6 @@ public class Gamewindow extends JFrame {
         window.setVisible(true);//pencere gözükmesi için yazılmazsa programı göremeyiz
     }
     void mazeTanimlama(Maze maze){
-        Gamewindow.maze =maze;
+        Gamewindow.maze =maze;//labirentte savas baslayinca maze nesnesine odaklanmayı engellemek icin tanımladım
     }
 }

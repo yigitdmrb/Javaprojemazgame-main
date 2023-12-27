@@ -24,14 +24,11 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
 
     final private BufferedImage wall;
     static int[][] labirentMatrisi;
-    final private BufferedImage characterimg;
     final private BufferedImage floorimg;
-    static int characterx =32;
-    static int charactery =32;
+    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/demigod_male.png",2,4,25);
     static int[] nottree= new int[5];
 
     { try {
-            characterimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/demigod_male.png"));
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -80,46 +77,46 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
     public void keyPressed(KeyEvent e) {
         int pressedKey= e.getKeyCode();
         if (pressedKey==KeyEvent.VK_LEFT) {
-            characterx -= wall.getWidth()/8;
+            character.coordinatex -= wall.getWidth()/8;
         }
         else if (pressedKey==KeyEvent.VK_RIGHT) {
-            characterx += wall.getWidth()/8;
+            character.coordinatex += wall.getWidth()/8;
         }
         else if (pressedKey==KeyEvent.VK_DOWN) {
-            charactery+= wall.getHeight()/8;
+            character.coordinatey+= wall.getHeight()/8;
         }
         else if (pressedKey==KeyEvent.VK_UP) {
-            charactery-= wall.getHeight()/8;
+            character.coordinatey-= wall.getHeight()/8;
         }
 
         if (checkCollision()) {
             // Çakışma durumunda karakterin konumunu eski konumuna geri al
             if (pressedKey==KeyEvent.VK_LEFT) {
-                characterx += wall.getWidth()/8;
+                character.coordinatex += wall.getWidth()/8;
             }
             else if (pressedKey==KeyEvent.VK_RIGHT) {
-                characterx -= wall.getWidth()/8;
+                character.coordinatex -= wall.getWidth()/8;
             }
             else if (pressedKey==KeyEvent.VK_DOWN) {
-                charactery-= wall.getHeight()/8;
+                character.coordinatey-= wall.getHeight()/8;
             }
             else if (pressedKey==KeyEvent.VK_UP) {
-                charactery+= wall.getHeight()/8;
+                character.coordinatey+= wall.getHeight()/8;
             }
         }
         repaint();
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
-        Rectangle characterRect = new Rectangle(characterx, charactery, characterimg.getWidth(), characterimg.getHeight());
+        Rectangle characterRect = new Rectangle(character.coordinatex, character.coordinatey, character.img.getWidth(), character.img.getHeight());
         for (WallCoordinate coordinatwall : wallCoordinates) {
-            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth()-4, wall.getHeight()-4);
+            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth(), wall.getHeight());
             if (wallRect.intersects(characterRect)) {
                 return true; // Çakışma durumu
             }
             else{//dusmanla cakısma kontrol
                 for (Enemy enemy : enemies)
                 {
-                   Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,32,32);
+                   Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,enemy.img.getWidth(),enemy.img.getHeight());
                    if (enemyRect.intersects(characterRect)) {
                        fight(enemy);
                        return true;
@@ -134,7 +131,7 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
     public void fight(Enemy enemy){
         JFrame panel = new JFrame();//savas ekranı
         panel.setLayout(new GridLayout(2, 1));
-        JLabel imageLabel = new JLabel(new ImageIcon(enemy.enemyimg));
+        JLabel imageLabel = new JLabel(new ImageIcon(enemy.img));
         panel.add(imageLabel);
         String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
         message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
@@ -156,11 +153,6 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
                 enemy.health -= 2;
 
                 // Düşmanın sağlığı negatif olmasın
-                if (enemy.health < 0) {
-                    enemy.health = 0;
-                    Gamewindow.maze.setFocusable(true);
-                   panel.dispose();
-                }
 
                 // Saldırı sonrası güncellenmiş bilgileri göster
                 String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
@@ -170,6 +162,14 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
                 updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
 
                 textLabel.setText(updatedMessage);
+                if (enemy.health < 0) {
+
+                    panel.dispose();
+                    Gamewindow.maze.setFocusable(true);
+                    enemy.health = 0;
+                    repaint();//düsman haritadan silinmiyordu tekrar cizdirdim
+                }
+
             }
         });
 
@@ -206,7 +206,7 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
                 else if(labirentMatrisi[k][i]==2){
                     g.drawImage(floorimg, i * 32,  k * 32, this);
                     if(enemies.get(sayac).health!=0){
-                        g.drawImage(enemies.get(sayac).enemyimg, i * 32,  k * 32, this);
+                        g.drawImage(enemies.get(sayac).img, i * 32,  k * 32, this);
                         enemies.get(sayac).coordinatex=i * 32; enemies.get(sayac).coordinatey=k * 32;
                     }
                     else {
@@ -223,7 +223,7 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
                     wallCoordinates.add(new WallCoordinate(i * 32,k * 32));
                 }
             }
-            g.drawImage(characterimg,characterx,charactery,this);
+            g.drawImage(character.img,character.coordinatex,character.coordinatey,this);
         }
     }
     public void repaint()
