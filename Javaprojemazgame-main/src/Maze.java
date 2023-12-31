@@ -6,13 +6,11 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.EventListener;
-import java.util.Random;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Maze extends JPanel implements KeyListener, EventListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
+public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -20,20 +18,19 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
         }
     }
     ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();
-  static ArrayList<Enemy> enemies = new ArrayList<>();
+    static ArrayList<Enemy> enemies = new ArrayList<>();
 
     final private BufferedImage wall;
     static int[][] labirentMatrisi;
     final private BufferedImage floorimg;
-    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/demigod_male.png",2,4,25);
-    static int[] nottree= new int[5];
+    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,25);
 
     { try {
-            floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        }
+        floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+    }
 
 
     Maze(String filedirectory)  {
@@ -43,9 +40,6 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
             throw new RuntimeException(e);
         }
         setBackground(Color.green);
-        Random rnd = new Random();
-        for (int k = 0; k < 5; k++) {
-            nottree[k]= rnd.nextInt(1,5); }
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",5,3,10,"Saman Trol"));
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",5,3,10,"Halfing"));
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",5,3,10,"Dev"));
@@ -74,53 +68,93 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e){
         int pressedKey= e.getKeyCode();
         if (pressedKey==KeyEvent.VK_LEFT) {
-            character.coordinatex -= wall.getWidth()/8;
+            character.coordinatex -= 8;
+            try {
+                character.leftanimation(1);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         else if (pressedKey==KeyEvent.VK_RIGHT) {
-            character.coordinatex += wall.getWidth()/8;
+            character.coordinatex += 8;
+            try {
+                character.rightanimation(1);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         else if (pressedKey==KeyEvent.VK_DOWN) {
-            character.coordinatey+= wall.getHeight()/8;
+            try {
+                character.downanimation(1);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            character.coordinatey+= 8;
         }
         else if (pressedKey==KeyEvent.VK_UP) {
-            character.coordinatey-= wall.getHeight()/8;
+            try {
+                character.upanimation(1);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            character.coordinatey-= 8;
         }
 
         if (checkCollision()) {
             // Çakışma durumunda karakterin konumunu eski konumuna geri al
             if (pressedKey==KeyEvent.VK_LEFT) {
-                character.coordinatex += wall.getWidth()/8;
+                try {
+                    character.leftanimation(-1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatex += 8;
             }
             else if (pressedKey==KeyEvent.VK_RIGHT) {
-                character.coordinatex -= wall.getWidth()/8;
+                try {
+                    character.rightanimation(-1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatex -= 8;
             }
             else if (pressedKey==KeyEvent.VK_DOWN) {
-                character.coordinatey-= wall.getHeight()/8;
+                try {
+                    character.downanimation(-1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatey-= 8;
             }
             else if (pressedKey==KeyEvent.VK_UP) {
-                character.coordinatey+= wall.getHeight()/8;
+                try {
+                    character.upanimation(-1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatey+=8;
             }
         }
         repaint();
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
-        Rectangle characterRect = new Rectangle(character.coordinatex, character.coordinatey, character.img.getWidth(), character.img.getHeight());
+        Rectangle characterRect = new Rectangle(character.coordinatex, character.coordinatey, character.img.getWidth()*4, character.img.getHeight()*4);
         for (WallCoordinate coordinatwall : wallCoordinates) {
-            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth(), wall.getHeight());
+            Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth()*2, wall.getHeight()*2);
             if (wallRect.intersects(characterRect)) {
                 return true; // Çakışma durumu
             }
             else{//dusmanla cakısma kontrol
                 for (Enemy enemy : enemies)
                 {
-                   Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,enemy.img.getWidth(),enemy.img.getHeight());
-                   if (enemyRect.intersects(characterRect)) {
-                       fight(enemy);
-                       return true;
-                   }
+                    Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,enemy.img.getWidth()*2,enemy.img.getHeight()*2);
+                    if (enemyRect.intersects(characterRect)) {
+                        fight(enemy);
+                        return true;
+                    }
 
                 }
             }
@@ -149,11 +183,7 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
         attackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Saldırı butonuna tıklanınca düşmanın sağlığını 2 azalt
-                enemy.health -= 2;
-
-                // Düşmanın sağlığı negatif olmasın
-
+                enemy.health -= character.attack;
                 // Saldırı sonrası güncellenmiş bilgileri göster
                 String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
                 updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
@@ -195,19 +225,19 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
 
     }
     @Override
-    public void paint(Graphics g) {
+    public void paint(Graphics g) {//cizdirme fonksiyonu
         super.paint(g);
 
         int sayac=0;
         for (int k = 0; k < 11; k++) {
             for (int i = 0; i < 16; i++) {
                 if (labirentMatrisi[k][i]==0)
-                    g.drawImage(floorimg, i * 32,  k * 32, this);
+                    g.drawImage(floorimg, i * 64,  k * 64, 64,64,this);
                 else if(labirentMatrisi[k][i]==2){
-                    g.drawImage(floorimg, i * 32,  k * 32, this);
+                    g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     if(enemies.get(sayac).health!=0){
-                        g.drawImage(enemies.get(sayac).img, i * 32,  k * 32, this);
-                        enemies.get(sayac).coordinatex=i * 32; enemies.get(sayac).coordinatey=k * 32;
+                        g.drawImage(enemies.get(sayac).img, i * 64,  k * 64, 64,64,this);
+                        enemies.get(sayac).coordinatex=i * 64; enemies.get(sayac).coordinatey=k * 64;
                     }
                     else {
                         labirentMatrisi[k][i]=0;
@@ -219,11 +249,11 @@ public class Maze extends JPanel implements KeyListener, EventListener {//mapi b
 
                 }
                 else{
-                    g.drawImage(wall, i * 32,  k * 32, this);
-                    wallCoordinates.add(new WallCoordinate(i * 32,k * 32));
+                    g.drawImage(wall, i * 64,  k * 64,64,64, this);
+                    wallCoordinates.add(new WallCoordinate(i * 64,k * 64));
                 }
             }
-            g.drawImage(character.img,character.coordinatex,character.coordinatey,this);
+            g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
         }
     }
     public void repaint()
