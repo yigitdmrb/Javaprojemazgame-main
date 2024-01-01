@@ -1,8 +1,11 @@
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import javax.swing.*;
+
 public class Gamewindow extends JFrame {
     static Maze maze ;
     public static void main(String[] args) {
+        //ImageIcon image;
+        //image = new ImageIcon("noitaLogo.jpg");//çerçevenin logosu için görsel
+        //frame.setIconImage(image.getImage());//Çerçevenin logusunu değiştir
         Gamewindow window = new Gamewindow();//pencere nesnesi
         window.setTitle("Maze Game");
         window.setSize(1036,742);//pencere boyutu
@@ -10,6 +13,8 @@ public class Gamewindow extends JFrame {
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);// çarpıya baasınca programı sonlandırır
         window.setFocusable(false);
         window.setResizable(false);//ekran boyutunu değiştirmeyi engeller
+        ImageIcon image = new ImageIcon("Javaprojemazgame-main/src/Images/doors/golden_statue_1.png");
+        window.setIconImage(image.getImage());
 
         Maze maze = new Maze("Javaprojemazgame-main/src/Images/snake_2.png");
         maze.setSize(525*2,384*2);

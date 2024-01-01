@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 
 public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
+    //messega image düzenlenecek ve kapının arkası düzeltilcek
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -23,8 +24,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     static int[][] labirentMatrisi;
     final private BufferedImage floorimg;
     final private BufferedImage exitImage;
+    Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
+    ImageIcon icon = new ImageIcon(customImage);
     //private Image exitImage = new ImageIcon("return_depths.png").getImage();
     static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,18);
+
 
     { try {
         floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
@@ -255,6 +259,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setModal(false);
                     dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                     dialog.setVisible(true);
+                    optionPane.setIcon(icon);
                 }
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
@@ -275,7 +280,10 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     }
     public BufferedImage characterHealthBar(int health) throws IOException{
         BufferedImage healthBarimg=null;
-        if (health>16&& health<20){
+        if (health == 18){
+            healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/enemies/no_damage.png"));
+        }
+        else if (health>16 && health<20){
             healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_lightly_damaged.png"));
         }
         else if (health>12){
