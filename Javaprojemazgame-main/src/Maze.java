@@ -7,8 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
     static class WallCoordinate {
@@ -184,9 +183,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         JButton attackButton = new MyJButton("Saldır");
         JButton defenseButton = new MyJButton("Savun");
 
-        attackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        attackButton.addActionListener(e -> {
                 enemy.health -= character.attack;
                 // Saldırı sonrası güncellenmiş bilgileri göster
                 String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
@@ -202,16 +199,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     Gamewindow.maze.setFocusable(true);
                     enemy.health = 0;
                     repaint();//düsman haritadan silinmiyordu tekrar cizdirdim
-                }
-
             }
         });
 
-        defenseButton.addActionListener(new ActionListener() { //savunma butonu
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        defenseButton.addActionListener(e -> { //savunma butonu
 
-            }
         });
 
         panel.add(attackButton);
