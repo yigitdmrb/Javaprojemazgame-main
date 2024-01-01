@@ -1,3 +1,4 @@
+import javax.annotation.processing.Filer;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -5,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
@@ -25,7 +27,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage floorimg;
     final private BufferedImage exitImage;
     //private Image exitImage = new ImageIcon("return_depths.png").getImage();
-    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,25);
+    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,18);
 
     { try {
         floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
@@ -265,8 +267,14 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setVisible(true);
                 }
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
+                    g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     g.drawImage(exitImage, i * 64, k * 64, 64, 64, this);
                 }
+            }
+            try {
+                g.drawImage(characterHealthBar(character.health),character.coordinatex+5,character.coordinatey-92,54,86,this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
         }
@@ -274,5 +282,32 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     public void repaint()
     {
         super.repaint();
+    }
+    public BufferedImage characterHealthBar(int health) throws IOException{
+        BufferedImage healthBarimg=null;
+        if(health==20){
+            healthBarimg=null;
+        }
+        else if (health>16){
+            healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_lightly_damaged.png"));
+        }
+        else if (health>12){
+            healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_moderately_damaged.png"));
+        }
+        else if(health>8)
+        {
+            healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_heavily_damaged.png"));
+        }
+        else if(health>4)
+        {
+            healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_severely_damaged.png"));
+        }
+        else if(health>0){
+            healthBarimg=ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_almost_dead.png"));
+        }
+        else{
+            healthBarimg=null;
+        }
+        return healthBarimg;
     }
 }
