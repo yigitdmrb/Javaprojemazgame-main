@@ -283,10 +283,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     }
     public BufferedImage characterHealthBar(int health) throws IOException{
         BufferedImage healthBarimg=null;
-        if(health==20){
-            healthBarimg=null;
-        }
-        else if (health>16){
+        if (health>16&& health<20){
             healthBarimg= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_lightly_damaged.png"));
         }
         else if (health>12){
@@ -302,9 +299,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         }
         else if(health>0){
             healthBarimg=ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/damage_meter_almost_dead.png"));
-        }
-        else{
-            healthBarimg=null;
         }
         return healthBarimg;
     }
