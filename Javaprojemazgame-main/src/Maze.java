@@ -23,10 +23,13 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage wall;
     static int[][] labirentMatrisi;
     final private BufferedImage floorimg;
+    final private BufferedImage exitImage;
+    //private Image exitImage = new ImageIcon("return_depths.png").getImage();
     static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,25);
 
     { try {
         floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
+        //exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
     } catch (IOException e) {
         throw new RuntimeException(e);
     }
@@ -36,6 +39,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     Maze(String filedirectory)  {
         try {
             this.wall =ImageIO.read(new FileInputStream(filedirectory));
+            exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +62,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 {1, 2, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
                 {1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
                 {1, 1, 1, 1, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1},
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1},
         };
 
     }
@@ -227,12 +231,12 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     @Override
     public void paint(Graphics g) {//cizdirme fonksiyonu
         super.paint(g);
-
         int sayac=0;
         for (int k = 0; k < 11; k++) {
             for (int i = 0; i < 16; i++) {
-                if (labirentMatrisi[k][i]==0)
+                if (labirentMatrisi[k][i]==0){
                     g.drawImage(floorimg, i * 64,  k * 64, 64,64,this);
+                }
                 else if(labirentMatrisi[k][i]==2){
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     if(enemies.get(sayac).health!=0){
@@ -248,9 +252,20 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     sayac++;
 
                 }
-                else{
+                else if (labirentMatrisi[k][i] == 1){
                     g.drawImage(wall, i * 64,  k * 64,64,64, this);
                     wallCoordinates.add(new WallCoordinate(i * 64,k * 64));
+                }
+                //çıkışa ulaşınca tebriller yazısı çıkıyor ve açılan panel kapanmıyor , bilerek bu şekilde ayarladım.
+                else if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) {
+                    JOptionPane optionPane = new JOptionPane("Tebrikler!Çıkışa ulaştın!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                    JDialog dialog = optionPane.createDialog(this, "Tebrikler");
+                    dialog.setModal(false);
+                    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    dialog.setVisible(true);
+                }
+                else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
+                    g.drawImage(exitImage, i * 64, k * 64, 64, 64, this);
                 }
             }
             g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
