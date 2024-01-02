@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 
 public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
-    //messega image düzenlenecek ve kapının arkası düzeltilcek
+    //patch notes: Sandık ekledim fakat eksik düzeltilcek.Sandığı bir defa almamız gerek konuda bir sayaç koyup yapabilirim sanırım.
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -24,15 +24,14 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     static int[][] labirentMatrisi;
     final private BufferedImage floorimg;
     final private BufferedImage exitImage;
+    final private BufferedImage chestImage;
     Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
     ImageIcon icon = new ImageIcon(customImage);
-    //private Image exitImage = new ImageIcon("return_depths.png").getImage();
     static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,18);
 
 
     { try {
         floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
-        //exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
     } catch (IOException e) {
         throw new RuntimeException(e);
     }
@@ -43,6 +42,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         try {
             this.wall =ImageIO.read(new FileInputStream(filedirectory));
             exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
+            chestImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/chest.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -56,15 +56,15 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",5,3,10,"Tas Dev"));
         labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 2, 0, 1, 1, 0, 0, 0, 1, 1, 1, 2, 1},
-                {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1},
-                {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1},
+                {1, 0, 0, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 2, 1},
+                {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 4, 1, 0, 1},
                 {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 2, 0, 1},
                 {1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1},
                 {1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 0, 1, 0, 1},
                 {1, 2, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
-                {1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                {1, 1, 1, 1, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 2, 1},
+                {1, 1, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1, 0, 1, 0, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1},
         };
 
@@ -264,6 +264,17 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     g.drawImage(exitImage, i * 64, k * 64, 64, 64, this);
+                }
+                else if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 4) {
+                    JOptionPane optionPane = new JOptionPane("Bir sandık buldun!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                    JDialog dialog = optionPane.createDialog(this, "Tebrikler");
+                    dialog.setModal(false);
+                    dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+                    dialog.setVisible(true);
+                    optionPane.setIcon(icon);
+                }else if (labirentMatrisi[k][i] == 4) {
+                    g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
+                    g.drawImage(chestImage, i * 64,  k * 64,64,64, this);
                 }
             }
             try {
