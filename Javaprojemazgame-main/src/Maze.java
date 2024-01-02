@@ -188,21 +188,21 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         JButton defenseButton = new MyJButton("Savun");
 
         attackButton.addActionListener(e -> {
-                enemy.health -= character.attack;
-                // Saldırı sonrası güncellenmiş bilgileri göster
-                String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
-                updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
-                updatedMessage += "Sağlık: " + enemy.health +"<br>";
-                updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
-                updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
+            enemy.health -= character.attack;
+            // Saldırı sonrası güncellenmiş bilgileri göster
+            String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
+            updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
+            updatedMessage += "Sağlık: " + enemy.health +"<br>";
+            updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+            updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
 
-                textLabel.setText(updatedMessage);
-                if (enemy.health < 0) {
+            textLabel.setText(updatedMessage);
+            if (enemy.health < 0) {
 
-                    panel.dispose();
-                    Gamewindow.maze.setFocusable(true);
-                    enemy.health = 0;
-                    repaint();//düsman haritadan silinmiyordu tekrar cizdirdim
+                panel.dispose();
+                Gamewindow.maze.setFocusable(true);
+                enemy.health = 0;
+                repaint();//düsman haritadan silinmiyordu tekrar cizdirdim
             }
         });
 
@@ -272,6 +272,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
                     dialog.setVisible(true);
                     optionPane.setIcon(icon);
+                    labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] =0;
                 }else if (labirentMatrisi[k][i] == 4) {
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     g.drawImage(chestImage, i * 64,  k * 64,64,64, this);
