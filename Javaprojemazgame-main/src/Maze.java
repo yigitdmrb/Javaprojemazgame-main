@@ -19,10 +19,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     }
     static class ChestCoordinate {
         int x,y;
-        String buffpath;
-        ChestCoordinate(int x, int y,String buffpath){
+        String buffpath,buffAbility;
+        ChestCoordinate(int x, int y,String buffpath,String buffAbility){
             this.x=x; this.y=y;
             this.buffpath = buffpath;
+            this.buffAbility=buffAbility;
             }
         }
     ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();
@@ -40,9 +41,9 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,20);
 
     Maze(String filedirectory)  {
-        chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png"));//konumlar sıfır baslattım paintte cizerken konumlar degisiciek
-        chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/Images/zot_defence.png"));
-        chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/dungeon_sprint.png"));
+        chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png","attack"));
+        chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/Images/zot_defence.png","defence"));
+        chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/dungeon_sprint.png","health"));//resim bulamadım ondan bunu koydum canı fullemesi lazım normalde
         try {
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
             this.wall =ImageIO.read(new FileInputStream(filedirectory));
@@ -62,7 +63,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 0, 0, 0, 2, 4, 1, 1, 0, 0, 0, 0, 0, 1, 2, 1},
-                {1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
                 {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 4, 1, 0, 1},
                 {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 2, 0, 1},
                 {1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1},
@@ -170,7 +171,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             for (ChestCoordinate chest : chestCoordinates)//düsmanla cakısma kontrol
             {
                 Rectangle chestRect = new Rectangle(chest.x,chest.y,64,64);
-                if (chestRect.intersects(characterRect)) {
+                if (chestRect.intersects(characterRect)&&labirentMatrisi[chest.y / 64][chest.x / 64] ==4) {
                     Image buffimg = new ImageIcon(chest.buffpath).getImage();
                     ImageIcon bufficon = new ImageIcon(buffimg);
                     JOptionPane optionPane = new JOptionPane("Bir Buff kazandın!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, bufficon, new Object[]{}, null);
@@ -178,6 +179,12 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setModal(false);
                     dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
                     dialog.setVisible(true);
+                    if(chest.buffAbility.equals("attack"))
+                        character.attack+=3;
+                    else if(chest.buffAbility.equals("defence"))
+                        character.defense+=3;
+                    else
+                        character.health=20;
                     labirentMatrisi[chest.y / 64][chest.x / 64] =0;
                     return true;
                 }
