@@ -7,15 +7,13 @@ public class MyCharacter extends Entity {
     MyCharacter(String characterimgpath, int attack, int defense, int health){
         super(characterimgpath,attack,defense,health);
         super.coordinatex=64;  super.coordinatey=64;
-
     }
-
     public void leftanimation(int input)throws IOException {
-        yon_sayaclari[0]+=input;
-        if(yon_sayaclari[0]%2==0)
-            this.img= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_left.png"));
-        else
-            this.img= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_left_2.png"));
+            yon_sayaclari[0] += input;
+            if (yon_sayaclari[0] % 2 == 0)
+                this.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_left.png"));
+            else
+                this.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_left_2.png"));
     }
     public void rightanimation(int input)throws IOException {
         yon_sayaclari[1]+=input;
@@ -39,3 +37,4 @@ public class MyCharacter extends Entity {
             this.img= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_2.png"));
     }
 }
+

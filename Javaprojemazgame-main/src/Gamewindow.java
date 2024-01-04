@@ -3,9 +3,6 @@ import javax.swing.*;
 public class Gamewindow extends JFrame {
     static Maze maze ;
     public static void main(String[] args) {
-        //ImageIcon image;
-        //image = new ImageIcon("noitaLogo.jpg");//çerçevenin logosu için görsel
-        //frame.setIconImage(image.getImage());//Çerçevenin logusunu değiştir
         Gamewindow window = new Gamewindow();//pencere nesnesi
         window.setTitle("Maze Game");
         window.setSize(1036,742);//pencere boyutu

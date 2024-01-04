@@ -214,6 +214,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
 
         attackButton.addActionListener(e -> {
             enemy.health -= character.attack;
+            character.health-=enemy.attack;
             // Saldırı sonrası güncellenmiş bilgileri göster
             String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
             updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
@@ -299,6 +300,20 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 g.drawImage(characterHealthBar(character.health),character.coordinatex+5,character.coordinatey-92,54,86,this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+            if(character.health<=0) {
+                try {
+                    character.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png"));
+                    JOptionPane optionPane = new JOptionPane("Kaybettiniz", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                    JDialog dialog = optionPane.createDialog(this, "Üzgünüz :(");
+                    dialog.setModal(false);
+                    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    dialog.setVisible(true);
+                    optionPane.setIcon(icon);
+                    Gamewindow.maze.setFocusable(false);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
             g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
         }
