@@ -6,7 +6,7 @@ public class Gamewindow extends JFrame {
 
         Gamewindow window = new Gamewindow();
         window.setTitle("Maze Game");
-        window.setSize(1036, 742);
+        window.setSize(1036, 764);
         window.setLocation(200, 20);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setFocusable(false);
@@ -24,20 +24,24 @@ public class Gamewindow extends JFrame {
         JMenuItem storyItem = new JMenuItem("Hikaye");
 
         //Bilgi seçeneği
-        infoItem.addActionListener(e -> {
-            JOptionPane.showMessageDialog(window, "     Canavarları yenmek için üzerlerine git ve saldır.   " +
-                    "  \nEğer güçlendirmeleri almazsan canavarlar seni öldürebilir.","Bilgi",JOptionPane.INFORMATION_MESSAGE);
-        });
+        infoItem.addActionListener(e -> JOptionPane.showMessageDialog(window, """
+                     Canavarları yenmek için üzerlerine git ve saldır.  \s
+                Eğer güçlendirmeleri almazsan canavarlar seni öldürebilir.
+                Her iki saldırında bir güç toplayarak kurt vuruşu yapabilirsin.""","Bilgi",JOptionPane.INFORMATION_MESSAGE));
 
         //Hikaye Seçeneği
         storyItem.addActionListener(e -> {
-            String text = "Saltun, kaybolmuş ve unutulmuş bir askerdi. Savaşın ardından labirentin içinde, eski bir\n" +
-                    "harabe haline gelmiş duvarlar arasında kaybolmuştu. Gözleri, savaşın yorgunluğunu ve\n" +
-                    "geçmişin izlerini taşıyordu.\n\n" +
-                    "Eski bir asker olarak, stratejik zekası ve savaşma becerileriyle labirentin içinde \n" +
-                    "ilerliyordu. Karşısına çıkacak canavarlardan habersiz labirentin içinde yeni bir.\n" +
-                    "mücadeleye atılıyordu. Bakalım Saltun sandıktan çıkacak süprizlerler beraber bu \n" +
-                    "korkunç labirentten kurtulabilecek mi ?\n\n";
+            String text = """
+                    Saltun, kaybolmuş ve unutulmuş bir askerdi. Savaşın ardından labirentin içinde, eski bir
+                    harabe haline gelmiş duvarlar arasında kaybolmuştu. Gözleri, savaşın yorgunluğunu ve
+                    geçmişin izlerini taşıyordu.
+
+                    Eski bir asker olarak, stratejik zekası ve savaşma becerileriyle labirentin içinde\s
+                    ilerliyordu. Karşısına çıkacak canavarlardan habersiz labirentin içinde yeni bir.
+                    mücadeleye atılıyordu. Bakalım Saltun sandıktan çıkacak süprizlerler beraber bu\s
+                    korkunç labirentten kurtulabilecek mi ?
+
+                    """;
             JOptionPane.showMessageDialog(window, text,"Hikaye",JOptionPane.INFORMATION_MESSAGE);
         });
 
@@ -45,6 +49,7 @@ public class Gamewindow extends JFrame {
 
         // Yeni Oyun Başlat seçeneği için ActionListener ekleme
         newGameItem.addActionListener(e -> {
+            Gamewindow.maze.setVisible(false);
             Maze bir=resetGame();
             window.add(bir);
             window.mazeTanimlama(bir);
@@ -91,9 +96,10 @@ public class Gamewindow extends JFrame {
         maze.setFocusTraversalKeysEnabled(false);
         // Karakterin koordinatlarını eski yerlerine geri yükle
         MyCharacter character = maze.character;
+        character.health=20;
         character.coordinatex = 64;
         character.coordinatey = 64;
+        character.attack=2;
         return maze;
     }
 }
-
