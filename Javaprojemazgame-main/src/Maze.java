@@ -36,7 +36,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage chestImage;
     Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
     ImageIcon icon = new ImageIcon(customImage);
-     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
+     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",25,20);
 
     Maze()  {
         finish=false;
@@ -315,11 +315,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     g.drawImage(wall, i * 64,  k * 64,64,64, this);
                     wallCoordinates.add(new WallCoordinate(i * 64,k * 64));
                 }
-                //çıkışa ulaşınca tebriller yazısı çıkıyor ve açılan panel kapanmıyor , bilerek bu şekilde ayarladım.
-                else if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) {
-                    JOptionPane.showMessageDialog(this, "Tebrikler! Çıkışa ulaştın!", "Tebrikler", JOptionPane.INFORMATION_MESSAGE, icon);
-                    finish=true;
-                }
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
                     g.drawImage(exitImage, i * 64, k * 64, 64, 64, this);
@@ -333,6 +328,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 g.drawImage(characterHealthBar(character.health),character.coordinatex+5,character.coordinatey-92,54,86,this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+            if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) { //çıkışa ulaşınca tebriller yazısı çıkıyor
+                JOptionPane.showMessageDialog(this, "Tebrikler! Çıkışa ulaştın!", "Tebrikler", JOptionPane.INFORMATION_MESSAGE, icon);
+                labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64]=0;
+                finish=true;
             }
             g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
         }
