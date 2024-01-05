@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 
 public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
+    //patch notes: Sandık ekledim fakat eksik düzeltilcek.Sandığı bir defa almamız gerek konuda bir sayaç koyup yapabilirim sanırım.
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -28,7 +29,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();
     ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();
     static ArrayList<Enemy> enemies = new ArrayList<>();
-
+    int kvsayaci=0;//kurt vurusu icin sayac
     final private BufferedImage wall;
     static int[][] labirentMatrisi;
     final private BufferedImage floorimg;
@@ -36,13 +37,12 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage chestImage;
     Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
     ImageIcon icon = new ImageIcon(customImage);
-
-    static MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,20);
+     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,20);
 
     Maze(String filedirectory)  {
         chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png","attack"));
         chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/Images/zot_defence.png","defence"));
-        chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/meat_ration.png","health"));//resim bulamadım ondan bunu koydum canı fullemesi lazım normalde
+        chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/dungeon_sprint.png","health"));//resim bulamadım ondan bunu koydum canı fullemesi lazım normalde
         try {
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
             this.wall =ImageIO.read(new FileInputStream(filedirectory));
@@ -52,13 +52,13 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             throw new RuntimeException(e);
         }
         setBackground(Color.black);
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",1,3,10,"Saman Trol"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",5,3,10,"Halfing"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",5,3,10,"Dev"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",5,3,10,"Kaya Trol"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",5,3,10,"Salamander"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",5,3,10,"Ejderha"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",5,3,10,"Tas Dev"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",10,3,10,"Saman Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",2,3,10,"Halfing"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",2,3,10,"Dev"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",2,3,10,"Kaya Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",2,3,10,"Salamander"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",2,3,10,"Ejderha"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",2,3,10,"Tas Dev"));
         labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 0, 0, 0, 2, 4, 1, 1, 0, 0, 0, 0, 0, 1, 2, 1},
@@ -72,7 +72,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 {1, 1, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1, 0, 1, 0, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1},
         };
-
+        repaint();
     }
     @Override
     public void keyTyped(KeyEvent e) {
@@ -81,76 +81,72 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
 
     @Override
     public void keyPressed(KeyEvent e){
-        int pressedKey= e.getKeyCode();
-        if (pressedKey==KeyEvent.VK_LEFT) {
-            character.coordinatex -= 8;
-            try {
-                character.leftanimation(1);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        else if (pressedKey==KeyEvent.VK_RIGHT) {
-            character.coordinatex += 8;
-            try {
-                character.rightanimation(1);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        else if (pressedKey==KeyEvent.VK_DOWN) {
-            try {
-                character.downanimation(1);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            character.coordinatey+= 8;
-        }
-        else if (pressedKey==KeyEvent.VK_UP) {
-            try {
-                character.upanimation(1);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            character.coordinatey-= 8;
-        }
-
-        if (checkCollision()) {
-            // Çakışma durumunda karakterin konumunu eski konumuna geri al
-            if (pressedKey==KeyEvent.VK_LEFT) {
-                try {
-                    character.leftanimation(-1);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                character.coordinatex += 8;
-            }
-            else if (pressedKey==KeyEvent.VK_RIGHT) {
-                try {
-                    character.rightanimation(-1);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+        if(character.health>0) {
+            int pressedKey = e.getKeyCode();
+            if (pressedKey == KeyEvent.VK_LEFT) {
                 character.coordinatex -= 8;
-            }
-            else if (pressedKey==KeyEvent.VK_DOWN) {
                 try {
-                    character.downanimation(-1);
+                    character.leftanimation(1);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                character.coordinatey-= 8;
-            }
-            else if (pressedKey==KeyEvent.VK_UP) {
+            } else if (pressedKey == KeyEvent.VK_RIGHT) {
+                character.coordinatex += 8;
                 try {
-                    character.upanimation(-1);
+                    character.rightanimation(1);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                character.coordinatey+=8;
+            } else if (pressedKey == KeyEvent.VK_DOWN) {
+                try {
+                    character.downanimation(1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatey += 8;
+            } else if (pressedKey == KeyEvent.VK_UP) {
+                try {
+                    character.upanimation(1);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                character.coordinatey -= 8;
             }
+
+            if (checkCollision()) {
+                // Çakışma durumunda karakterin konumunu eski konumuna geri al
+                if (pressedKey == KeyEvent.VK_LEFT) {
+                    try {
+                        character.leftanimation(-1);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    character.coordinatex += 8;
+                } else if (pressedKey == KeyEvent.VK_RIGHT) {
+                    try {
+                        character.rightanimation(-1);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    character.coordinatex -= 8;
+                } else if (pressedKey == KeyEvent.VK_DOWN) {
+                    try {
+                        character.downanimation(-1);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    character.coordinatey -= 8;
+                } else if (pressedKey == KeyEvent.VK_UP) {
+                    try {
+                        character.upanimation(-1);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    character.coordinatey += 8;
+                }
+            }
+            repaint();
         }
-        repaint();
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
         Rectangle characterRect = new Rectangle(character.coordinatex, character.coordinatey, character.img.getWidth()*4, character.img.getHeight()*4);
@@ -195,11 +191,10 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     }
     public void fight(Enemy enemy){
         JFrame panel = new JFrame();//savas ekranı
-        panel.setLayout(new GridLayout(3, 1));
+        panel.setLayout(new GridLayout(2, 1));
         JLabel imageLabel = new JLabel(new ImageIcon(enemy.img));
         panel.add(imageLabel);
-        String message = "<html><div style='text-align: center; margin:auto;'>";
-        message += "Düşmanla karşılaşıldı!<br>";
+        String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
         message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
         message += "Sağlık: " + enemy.health +"<br>";
         message += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
@@ -209,62 +204,89 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         panel.add(textLabel);
 
         JButton attackButton = new MyJButton("Saldır");
-        //JButton defenseButton = new MyJButton("Savun");
-
+        JButton ultiButton = new MyJButton("Kurt vuruşu");
+        ultiButton.setEnabled(false);
         attackButton.addActionListener(e -> {
-                    if (enemy.health > 0 && character.health > 0) {
-                        // Player attacks enemy
-                        enemy.health -= character.attack;
-                        // Check if the enemy is defeated
-                        if (enemy.health <= 0) {
-                            enemy.health = 0;
-                            panel.dispose();
-                            Gamewindow.maze.setFocusable(true);
-                            repaint();
-                        } else {
-                            // Enemy counterattacks
-                            character.health -= enemy.attack;
+            enemy.health -= character.attack;
+            character.health-=enemy.attack;
+            // Saldırı sonrası güncellenmiş bilgileri göster
+            String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
+            updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
+            updatedMessage += "Sağlık: " + enemy.health +"<br>";
+            updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+            updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
+            textLabel.setText(updatedMessage);
+            ultiButton.setEnabled(false);
+            kvsayaci++;
+            if (kvsayaci%2==0){
+                ultiButton.setEnabled(true);
+            }
+            if (character.health<0) {
 
-                            // Update the message with both player and enemy stats
-                            String updatedMessage = "<html><div style='text-align: center;'>";
-                            updatedMessage += "Düşmanla karşılaşıldı!<br>";
-                            updatedMessage += "Düşman: " + enemy.name + "&nbsp;&nbsp;";
-                            updatedMessage += "Sağlık: " + enemy.health + "<br>";
-                            updatedMessage += "Saldırı: " + enemy.attack + "&nbsp;&nbsp;";
-                            updatedMessage += "Savunma: " + enemy.defense + "<br>";
-                            updatedMessage += "<br>";
-                            updatedMessage += "Siz: " + "Sağlık: " + character.health + "<br>";
-                            updatedMessage += "Saldırı: " + character.attack + "&nbsp;&nbsp;";
-                            updatedMessage += "Savunma: " + character.defense + "<br></div></html>";
+                panel.dispose();
+                try {
+                    character.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png"));
+                    repaint();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane optionPane = new JOptionPane("Kaybettiniz", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                JDialog dialog = optionPane.createDialog(this, "Üzgünüz :(");
+                dialog.setModal(false);
+                optionPane.setIcon(icon);
+                dialog.setVisible(true);
+                Gamewindow.maze.setFocusable(true);
+            }
+            else if(enemy.health<=0){
+                panel.dispose();
+                Gamewindow.maze.setFocusable(true);
+                enemy.health = 0;
+                repaint();}
 
-                            textLabel.setText(updatedMessage);
+        });
+        ultiButton.addActionListener(e -> { //ulti butonu çift hasar verir
+            enemy.health -= character.attack*2;
+            // Saldırı sonrası güncellenmiş bilgileri göster
+            String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
+            updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
+            updatedMessage += "Sağlık: " + enemy.health +"<br>";
+            updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+            updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
+            ultiButton.setEnabled(false);
+            textLabel.setText(updatedMessage);
+            if (character.health<0) {
 
-                            // Check if the player is defeated
-                            if (character.health <= 0) {
-                                character.health = 0;
-                                panel.dispose();
-                                Gamewindow.maze.setFocusable(true);
-                                repaint();
-                                // Implement game over logic if needed
-                            }
-                        }
-                    }
-        }
-        );
+                panel.dispose();
+                try {
+                    character.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png"));
+                    repaint();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane optionPane = new JOptionPane("Kaybettiniz", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+                JDialog dialog = optionPane.createDialog(this, "Üzgünüz :(");
+                dialog.setModal(false);
+                optionPane.setIcon(icon);
+                dialog.setVisible(true);
+                Gamewindow.maze.setFocusable(true);
+            }
+            else if(enemy.health<0){
+                panel.dispose();
+                Gamewindow.maze.setFocusable(true);
+                enemy.health = 0;
+                repaint();}
 
-        /*defenseButton.addActionListener(e -> { //savunma butonu
-
-        });*/
-
+        });
         panel.add(attackButton);
-        //panel.add(defenseButton);
+        panel.add(ultiButton);
         panel.getContentPane().setBackground(Color.black);
         panel.setLocation(400,150);
-        panel.setSize(700,400);//eski ayarlar 400,250 (sanırım)
+        panel.setSize(500,250);
         panel.setFocusable(true);
         Gamewindow.maze.setFocusable(false);//arkada kalan ekranda islem yapılmasını engelliyor
         panel.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);//sekmeyi kapatmayı engelleme
         panel.setVisible(true);
+
     }
     @Override
     public void keyReleased(KeyEvent e) {

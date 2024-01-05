@@ -8,7 +8,7 @@ public class Gamewindow extends JFrame {
         window.setTitle("Maze Game");
         window.setSize(1036, 764);
         window.setLocation(200, 20);
-        window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setFocusable(false);
         window.setResizable(false);
         ImageIcon image = new ImageIcon("Javaprojemazgame-main/src/Images/doors/golden_statue_1.png");
@@ -22,7 +22,6 @@ public class Gamewindow extends JFrame {
         JMenuItem exitItem = new JMenuItem("Oyundan Çık");
         JMenuItem infoItem = new JMenuItem("Bilgi");
         JMenuItem storyItem = new JMenuItem("Hikaye");
-        JMenuItem infoCharacterItem = new JMenuItem("Karakter statları");
 
         //Bilgi seçeneği
         infoItem.addActionListener(e -> JOptionPane.showMessageDialog(window, """
@@ -58,23 +57,13 @@ public class Gamewindow extends JFrame {
             JOptionPane.showMessageDialog(window, "Yeni oyun başlatıldı!","Yeni Oyun",JOptionPane.INFORMATION_MESSAGE);
         });
 
-
         // Oyundan Çık seçeneği için ActionListener ekleme
         exitItem.addActionListener(e -> System.exit(0));
         gameMenu.add(newGameItem);
         gameMenu.add(exitItem);
         gameMenu.add(infoItem);
         gameMenu.add(storyItem);
-        gameMenu.add(infoCharacterItem);
         menuBar.add(gameMenu);
-
-        //Menide karakter statları gösteriyor
-        infoCharacterItem.addActionListener(e -> {
-            MyCharacter character = Gamewindow.maze.character;
-            String characterStats = character.getCharacterStats();
-
-            JOptionPane.showMessageDialog(window, characterStats, "Karakter Statları", JOptionPane.INFORMATION_MESSAGE);
-        });
 
         // Pencereye menüyü ekleme
         window.setJMenuBar(menuBar);
@@ -89,7 +78,6 @@ public class Gamewindow extends JFrame {
         window.add(maze);
         window.mazeTanimlama(maze);
         window.setVisible(true);
-
     }
 
     void mazeTanimlama(Maze maze) {
