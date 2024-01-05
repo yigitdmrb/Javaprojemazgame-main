@@ -35,11 +35,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage chestImage;
     Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
     ImageIcon icon = new ImageIcon(customImage);
-     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,4,20);
+     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
 
     Maze(String filedirectory)  {
         chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png","attack"));
-        chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/Images/zot_defence.png","defence"));
+        chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/strawberry.png","health"));
         chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/meat_ration.png","health"));//eski resim yerine et koydum ,daha mantıklı
         try {
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
@@ -50,19 +50,19 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             throw new RuntimeException(e);
         }
         setBackground(Color.black);
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",10,3,10,"Saman Trol"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",2,3,10,"Halfing"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",2,3,10,"Dev"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",2,3,10,"Kaya Trol"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",2,3,10,"Salamander"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",2,3,10,"Ejderha"));
-        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",2,3,10,"Tas Dev"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/deep_troll_shaman.png",5,10,"Saman Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/halfling_new.png",2,10,"Halfing"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/hill_giant_new.png",4,10,"Dev"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/rock_troll.png",20,15,"Kaya Trol"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",2,10,"Salamander"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",5,25,"Ejderha"));
+        enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",2,10,"Tas Dev"));
         labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 2, 4, 1, 1, 0, 0, 0, 0, 0, 1, 2, 1},
-                {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 4, 1, 0, 1},
-                {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 2, 0, 1},
+                {1, 0, 0, 0, 2, 4, 1, 1, 0, 0, 2, 0, 0, 1, 0, 1},
+                {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1},
+                {1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 4, 1, 2, 1},
+                {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1},
                 {1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1},
                 {1, 4, 1, 0, 0, 0, 1, 1, 0, 1, 0, 2, 0, 1, 0, 1},
                 {1, 2, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1},
@@ -174,8 +174,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setVisible(true);
                     if(chest.buffAbility.equals("attack"))
                         character.attack+=3;
-                    else if(chest.buffAbility.equals("defence"))
-                        character.defense+=3;
                     else
                         character.health=20;
                     labirentMatrisi[chest.y / 64][chest.x / 64] =0;
@@ -196,7 +194,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
         message += "Sağlık: " + enemy.health +"<br>";
         message += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
-        message += "Savunma: " + enemy.defense + "<br></div></html>";
         JLabel textLabel = new JLabel(message);
         textLabel.setForeground(Color.white);
         panel.add(textLabel);
@@ -212,7 +209,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
             updatedMessage += "Sağlık: " + enemy.health +"<br>";
             updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
-            updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
             textLabel.setText(updatedMessage);
             ultiButton.setEnabled(false);
             kvsayaci++;
@@ -249,7 +245,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
             updatedMessage += "Sağlık: " + enemy.health +"<br>";
             updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
-            updatedMessage += "Savunma: " + enemy.defense + "<br></div></html>";
             ultiButton.setEnabled(false);
             textLabel.setText(updatedMessage);
             if (character.health<0) {
@@ -320,12 +315,13 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 }
                 //çıkışa ulaşınca tebriller yazısı çıkıyor ve açılan panel kapanmıyor , bilerek bu şekilde ayarladım.
                 else if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) {
-                    JOptionPane optionPane = new JOptionPane("Tebrikler!Çıkışa ulaştın!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
-                    JDialog dialog = optionPane.createDialog(this, "Tebrikler");
-                    dialog.setModal(false);
-                    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                    dialog.setVisible(true);
-                    optionPane.setIcon(icon);
+                    JOptionPane.showMessageDialog(this, "Tebrikler! Çıkışa ulaştın!", "Tebrikler", JOptionPane.INFORMATION_MESSAGE, icon);
+                    //JOptionPane optionPane = new JOptionPane("Tebrikler!Çıkışa ulaştın!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, icon, new Object[]{}, null);
+                    //JDialog dialog = optionPane.createDialog(this, "Tebrikler");
+                    //dialog.setModal(false);
+                    //dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+                    //dialog.setVisible(true);
+                    //optionPane.setIcon(icon);
                 }
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);

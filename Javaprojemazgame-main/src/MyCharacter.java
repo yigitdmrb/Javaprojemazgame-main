@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public class MyCharacter extends Entity {
     static int[] yon_sayaclari={0,0,0,0};
-    MyCharacter(String characterimgpath, int attack, int defense, int health){
-        super(characterimgpath,attack,defense,health);
+    MyCharacter(String characterimgpath, int attack, int health){
+        super(characterimgpath,attack,health);
         super.coordinatex=64;  super.coordinatey=64;
     }
     public void leftanimation(int input)throws IOException {
@@ -38,8 +38,7 @@ public class MyCharacter extends Entity {
     }
     public String getCharacterStats() {
         return "Sağlık: " + health + "\n" +
-                "Saldırı: " + attack + "\n" +
-                "Savunma: " + defense;
+                "Saldırı: " + attack + "\n";
     }
 }
 
