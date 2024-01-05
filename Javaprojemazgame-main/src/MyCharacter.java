@@ -36,5 +36,10 @@ public class MyCharacter extends Entity {
         else
             this.img= ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/player_2.png"));
     }
+    public String getCharacterStats() {
+        return "Sağlık: " + health + "\n" +
+                "Saldırı: " + attack + "\n" +
+                "Savunma: " + defense;
+    }
 }
 
