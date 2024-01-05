@@ -79,7 +79,7 @@ public class Gamewindow extends JFrame {
         window.setJMenuBar(menuBar);
 
         // Labirent oluşturma ve pencereye ekleme
-        Maze maze = new Maze("Javaprojemazgame-main/src/Images/snake_2.png");
+        Maze maze = new Maze();
         maze.setSize(525 * 2, 384 * 2);
         maze.requestFocus();
         maze.addKeyListener(maze);
@@ -98,7 +98,7 @@ public class Gamewindow extends JFrame {
     static Maze resetGame() {
         // Düşmanların koordinatlarının eski yerlerine geri yüklenmesi için temizleme
         Maze.enemies.clear();
-        Maze maze = new Maze("Javaprojemazgame-main/src/Images/snake_2.png");
+        Maze maze = new Maze();
         maze.setSize(525 * 2, 384 * 2);
         maze.requestFocus();
         maze.addKeyListener(maze);

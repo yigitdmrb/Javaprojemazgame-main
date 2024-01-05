@@ -38,14 +38,14 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     ImageIcon icon = new ImageIcon(customImage);
      MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
 
-    Maze(String filedirectory)  {
+    Maze()  {
         finish=false;
         chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png","attack"));
         chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/strawberry.png","health"));
         chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/meat_ration.png","health"));//eski resim yerine et koydum ,daha mantıklı
         try {
             floorimg = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/grass_0_new.png"));
-            this.wall =ImageIO.read(new FileInputStream(filedirectory));
+            wall =ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/snake_2.png"));
             exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
             chestImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/chest.png"));
         } catch (IOException e) {
