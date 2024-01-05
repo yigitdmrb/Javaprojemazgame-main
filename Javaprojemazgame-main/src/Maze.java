@@ -263,7 +263,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 dialog.setVisible(true);
                 Gamewindow.maze.setFocusable(true);
             }
-            else if(enemy.health<0){
+            else if(enemy.health<=0){
                 panel.dispose();
                 Gamewindow.maze.setFocusable(true);
                 enemy.health = 0;
