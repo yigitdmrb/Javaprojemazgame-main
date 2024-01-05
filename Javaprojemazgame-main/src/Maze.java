@@ -27,6 +27,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();
     ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();
     static ArrayList<Enemy> enemies = new ArrayList<>();
+    boolean finish;
     int kvsayaci=0;//kurt vurusu icin sayac
     final private BufferedImage wall;
     static int[][] labirentMatrisi;
@@ -38,6 +39,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
      MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
 
     Maze(String filedirectory)  {
+        finish=false;
         chestCoordinates.add(new ChestCoordinate(64,64*6,"Javaprojemazgame-main/src/Images/sword.png","attack"));
         chestCoordinates.add(new ChestCoordinate(64*5,64,"Javaprojemazgame-main/src/strawberry.png","health"));
         chestCoordinates.add(new ChestCoordinate(12*64,64*3,"Javaprojemazgame-main/src/Images/meat_ration.png","health"));//eski resim yerine et koydum ,daha mantıklı
@@ -79,7 +81,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
 
     @Override
     public void keyPressed(KeyEvent e){
-        if(character.health>0) {
+        if(character.health > 0 && !finish) {
             int pressedKey = e.getKeyCode();
             if (pressedKey == KeyEvent.VK_LEFT) {
                 character.coordinatex -= 8;
@@ -316,12 +318,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 //çıkışa ulaşınca tebriller yazısı çıkıyor ve açılan panel kapanmıyor , bilerek bu şekilde ayarladım.
                 else if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) {
                     JOptionPane.showMessageDialog(this, "Tebrikler! Çıkışa ulaştın!", "Tebrikler", JOptionPane.INFORMATION_MESSAGE, icon);
-                    //JOptionPane optionPane = new JOptionPane("Tebrikler!Çıkışa ulaştın!", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, icon, new Object[]{}, null);
-                    //JDialog dialog = optionPane.createDialog(this, "Tebrikler");
-                    //dialog.setModal(false);
-                    //dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-                    //dialog.setVisible(true);
-                    //optionPane.setIcon(icon);
+                    finish=true;
                 }
                 else if (labirentMatrisi[k][i] == 3) { // Çıkış kapısı koordinatına geldiğinizde
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);

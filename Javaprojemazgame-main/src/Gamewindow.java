@@ -15,7 +15,6 @@ public class Gamewindow extends JFrame {
         ImageIcon image = new ImageIcon("Javaprojemazgame-main/src/Images/doors/golden_statue_1.png");
         window.setIconImage(image.getImage());
 
-
         // Menü oluşturma
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Menü");
