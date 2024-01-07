@@ -13,8 +13,6 @@ public abstract class Entity {//varlık sınıfım burdan kendi karakterimiz ve 
             throw new RuntimeException(e);
         }
         this.attack=attack;
-        //this.defense = defense;
         this.health=health;
-
     }
 }

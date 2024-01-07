@@ -1,7 +1,6 @@
 import javax.swing.*;
 
 public class Gamewindow extends JFrame {
-    //patch notes: heal resmini değiştirdim , oyundan çıkmak için menüden çıkış yapman gerekiyor , karakter statları eklendi
     static Maze maze;
     public static void main(String[] args) {
 
@@ -80,7 +79,7 @@ public class Gamewindow extends JFrame {
 
         // Labirent oluşturma ve pencereye ekleme
         Maze maze = new Maze();
-        maze.setSize(525 * 2, 384 * 2);
+        maze.setSize(1050, 768);
         maze.requestFocus();
         maze.addKeyListener(maze);
         maze.setFocusable(true);
@@ -99,7 +98,7 @@ public class Gamewindow extends JFrame {
         // Düşmanların koordinatlarının eski yerlerine geri yüklenmesi için temizleme
         Maze.enemies.clear();
         Maze maze = new Maze();
-        maze.setSize(525 * 2, 384 * 2);
+        maze.setSize(1050, 768);
         maze.requestFocus();
         maze.addKeyListener(maze);
         maze.setFocusable(true);

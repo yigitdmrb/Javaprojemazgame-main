@@ -24,8 +24,8 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             this.buffAbility=buffAbility;
             }
         }
-    ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();
-    ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();
+    ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();//sandık kortdinatları
+    ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();//duvar kordinatları
     static ArrayList<Enemy> enemies = new ArrayList<>();
     boolean finish;
     int kvsayaci=0;//kurt vurusu icin sayac
@@ -36,7 +36,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     final private BufferedImage chestImage;
     Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
     ImageIcon icon = new ImageIcon(customImage);
-     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",25,20);
+     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
 
     Maze()  {
         finish=false;
@@ -59,7 +59,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/salamander_stormcaller.png",2,10,"Salamander"));
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/sphinx_new.png",5,25,"Ejderha"));
         enemies.add(new Enemy("Javaprojemazgame-main/src/Images/enemies/stone_giant_new.png",2,10,"Tas Dev"));
-        labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar olucak
+        labirentMatrisi = new int[][]{ //0 lar yol 1 ler duvar 2 ler dusman 3 cıkis 4 sandik
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {1, 0, 0, 0, 2, 4, 1, 1, 0, 0, 2, 0, 0, 1, 0, 1},
                 {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1},
@@ -72,15 +72,12 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 {1, 1, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1, 0, 1, 0, 1},
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1},
         };
-        repaint();
-    }
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+        repaint();//her sey tanımlandıktan sonra cizdirme
     }
 
+
     @Override
-    public void keyPressed(KeyEvent e){
+    public void keyPressed(KeyEvent e){//tus algılama haraket icin
         if(character.health > 0 && !finish) {
             int pressedKey = e.getKeyCode();
             if (pressedKey == KeyEvent.VK_LEFT) {
@@ -163,7 +160,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     return true;
                 }
             }
-            for (ChestCoordinate chest : chestCoordinates)//düsmanla cakısma kontrol
+            for (ChestCoordinate chest : chestCoordinates)//chestle cakisma
             {
                 Rectangle chestRect = new Rectangle(chest.x,chest.y,64,64);
                 if (chestRect.intersects(characterRect)&&labirentMatrisi[chest.y / 64][chest.x / 64] ==4) {
@@ -174,11 +171,11 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setModal(false);
                     dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
                     dialog.setVisible(true);
-                    if(chest.buffAbility.equals("attack"))
+                    if(chest.buffAbility.equals("attack"))//atak buffı alınırsa
                         character.attack+=3;
-                    else
+                    else//heal buffı alınırsa
                         character.health=20;
-                    labirentMatrisi[chest.y / 64][chest.x / 64] =0;
+                    labirentMatrisi[chest.y / 64][chest.x / 64] =0;//buff alınınca sandıgı silmek icin
                     return true;
                 }
             }
@@ -189,7 +186,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     }
     public void fight(Enemy enemy){
         JFrame panel = new JFrame();//savas ekranı
-        panel.setLayout(new GridLayout(2, 1));
+        panel.setLayout(new GridLayout(2, 1));//sayfa duzeni icin
         JLabel imageLabel = new JLabel(new ImageIcon(enemy.img));
         panel.add(imageLabel);
         String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
@@ -247,7 +244,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
             updatedMessage += "Sağlık: " + enemy.health +"<br>";
             updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
-            ultiButton.setEnabled(false);
+            ultiButton.setEnabled(false);//basıldıktan sonra aktifligini kaldırmak icin
             textLabel.setText(updatedMessage);
             if (character.health<0) {
 
@@ -284,9 +281,9 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
 
     }
     @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+    public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {}
     @Override
     public void paint(Graphics g) {//cizdirme fonksiyonu
         super.paint(g);
