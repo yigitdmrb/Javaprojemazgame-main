@@ -9,6 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuyorum ve klavye işlemleri burda algılanıcak
+
+    ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();//sandık kortdinatları
+    ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();//duvar kordinatları
+    static ArrayList<Enemy> enemies = new ArrayList<>();
+    boolean finish;
+    int kvsayaci=0;//kurt vurusu icin sayac
+    final private BufferedImage wall;
+    static int[][] labirentMatrisi;
+    final private BufferedImage floorimg;
+    final private BufferedImage exitImage;
+    final private BufferedImage chestImage;
+    Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
+    ImageIcon icon = new ImageIcon(customImage);
+    MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
     static class WallCoordinate {
         int x,y;
         WallCoordinate(int x, int y){
@@ -24,19 +38,6 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             this.buffAbility=buffAbility;
             }
         }
-    ArrayList<ChestCoordinate> chestCoordinates = new ArrayList<>();//sandık kortdinatları
-    ArrayList<WallCoordinate> wallCoordinates = new ArrayList<>();//duvar kordinatları
-    static ArrayList<Enemy> enemies = new ArrayList<>();
-    boolean finish;
-    int kvsayaci=0;//kurt vurusu icin sayac
-    final private BufferedImage wall;
-    static int[][] labirentMatrisi;
-    final private BufferedImage floorimg;
-    final private BufferedImage exitImage;
-    final private BufferedImage chestImage;
-    Image customImage = new ImageIcon("Javaprojemazgame-main/src/Images/doors/stop_recall.png").getImage();
-    ImageIcon icon = new ImageIcon(customImage);
-     MyCharacter character = new MyCharacter("Javaprojemazgame-main/src/Images/player.png",2,20);
 
     Maze()  {
         finish=false;
@@ -48,6 +49,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             wall =ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/snake_2.png"));
             exitImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/doors/return_depths.png"));
             chestImage = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/chest.png"));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -78,17 +80,17 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
 
     @Override
     public void keyPressed(KeyEvent e){//tus algılama haraket icin
-        if(character.health > 0 && !finish) {
+        if(character.getHealth() > 0 && !finish) {
             int pressedKey = e.getKeyCode();
             if (pressedKey == KeyEvent.VK_LEFT) {
-                character.coordinatex -= 8;
+               character.setCoordinatex(character.getCoordinatex() - 8);
                 try {
                     character.leftanimation(1);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             } else if (pressedKey == KeyEvent.VK_RIGHT) {
-                character.coordinatex += 8;
+                character.setCoordinatex(character.getCoordinatex() + 8);
                 try {
                     character.rightanimation(1);
                 } catch (IOException ex) {
@@ -100,14 +102,14 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                character.coordinatey += 8;
+                character.setCoordinatey(character.getCoordinatey() + 8);
             } else if (pressedKey == KeyEvent.VK_UP) {
                 try {
                     character.upanimation(1);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                character.coordinatey -= 8;
+                character.setCoordinatey(character.getCoordinatey() - 8);
             }
 
             if (checkCollision()) {
@@ -118,35 +120,35 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    character.coordinatex += 8;
+                    character.setCoordinatex(character.getCoordinatex() + 8);
                 } else if (pressedKey == KeyEvent.VK_RIGHT) {
                     try {
                         character.rightanimation(-1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    character.coordinatex -= 8;
+                    character.setCoordinatex(character.getCoordinatex() - 8);
                 } else if (pressedKey == KeyEvent.VK_DOWN) {
                     try {
                         character.downanimation(-1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    character.coordinatey -= 8;
+                    character.setCoordinatey(character.getCoordinatey() - 8);
                 } else if (pressedKey == KeyEvent.VK_UP) {
                     try {
                         character.upanimation(-1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                    character.coordinatey += 8;
+                    character.setCoordinatey(character.getCoordinatey() + 8);
                 }
             }
             repaint();
         }
     }
     private boolean checkCollision() { //resimlerin çakışması kontrol ediliyor
-        Rectangle characterRect = new Rectangle(character.coordinatex, character.coordinatey, character.img.getWidth()*4, character.img.getHeight()*4);
+        Rectangle characterRect = new Rectangle(character.getCoordinatex(), character.getCoordinatey(), 64,64);
         for (WallCoordinate coordinatwall : wallCoordinates) {
             Rectangle wallRect = new Rectangle(coordinatwall.x, coordinatwall.y, wall.getWidth()*2, wall.getHeight()*2);
             if (wallRect.intersects(characterRect)) {
@@ -154,7 +156,7 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
             }
             for (Enemy enemy : enemies)//düsmanla cakısma kontrol
             {
-                Rectangle enemyRect = new Rectangle(enemy.coordinatex,enemy.coordinatey,enemy.img.getWidth()*2,enemy.img.getHeight()*2);
+                Rectangle enemyRect = new Rectangle(enemy.getCoordinatex(),enemy.getCoordinatey(),64,64);
                 if (enemyRect.intersects(characterRect)) {
                     fight(enemy);
                     return true;
@@ -172,9 +174,9 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                     dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
                     dialog.setVisible(true);
                     if(chest.buffAbility.equals("attack"))//atak buffı alınırsa
-                        character.attack+=3;
+                        character.setAttack(character.getAttack()+3);
                     else//heal buffı alınırsa
-                        character.health=20;
+                        character.setHealth(20);
                     labirentMatrisi[chest.y / 64][chest.x / 64] =0;//buff alınınca sandıgı silmek icin
                     return true;
                 }
@@ -187,12 +189,12 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
     public void fight(Enemy enemy){
         JFrame panel = new JFrame();//savas ekranı
         panel.setLayout(new GridLayout(2, 1));//sayfa duzeni icin
-        JLabel imageLabel = new JLabel(new ImageIcon(enemy.img));
+        JLabel imageLabel = new JLabel(new ImageIcon(enemy.getImg()));
         panel.add(imageLabel);
         String message = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
-        message += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
-        message += "Sağlık: " + enemy.health +"<br>";
-        message += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+        message += "Düşman: " + enemy.getName() +"&nbsp;&nbsp;";
+        message += "Sağlık: " + enemy.getHealth() +"<br>";
+        message += "Saldırı: " + enemy.getAttack() +"&nbsp;&nbsp;" ;
         JLabel textLabel = new JLabel(message);
         textLabel.setForeground(Color.white);
         panel.add(textLabel);
@@ -201,24 +203,24 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
         JButton ultiButton = new MyJButton("Kurt vuruşu");
         ultiButton.setEnabled(false);
         attackButton.addActionListener(e -> {
-            enemy.health -= character.attack;
-            character.health-=enemy.attack;
+            enemy.setHealth(enemy.getHealth() - character.getAttack());
+           character.setHealth(character.getHealth()-enemy.getAttack());
             // Saldırı sonrası güncellenmiş bilgileri göster
             String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
-            updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
-            updatedMessage += "Sağlık: " + enemy.health +"<br>";
-            updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+            updatedMessage += "Düşman: " + enemy.getName() +"&nbsp;&nbsp;";
+            updatedMessage += "Sağlık: " + enemy.getHealth() +"<br>";
+            updatedMessage += "Saldırı: " + enemy.getAttack() +"&nbsp;&nbsp;" ;
             textLabel.setText(updatedMessage);
             ultiButton.setEnabled(false);
             kvsayaci++;
             if (kvsayaci%2==0){
                 ultiButton.setEnabled(true);
             }
-            if (character.health<0) {
+            if (character.getHealth()<0) {
 
                 panel.dispose();
                 try {
-                    character.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png"));
+                    character.setImg(ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png")));
                     repaint();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -230,27 +232,27 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 dialog.setVisible(true);
                 Gamewindow.maze.setFocusable(true);
             }
-            else if(enemy.health<=0){
+            else if(enemy.getHealth()<=0){
                 panel.dispose();
                 Gamewindow.maze.setFocusable(true);
-                enemy.health = 0;
+                enemy.setHealth(0);
                 repaint();}
 
         });
         ultiButton.addActionListener(e -> { //ulti butonu çift hasar verir
-            enemy.health -= character.attack*2;
+            enemy.setHealth(enemy.getHealth() - character.getAttack()*2);
             // Saldırı sonrası güncellenmiş bilgileri göster
             String updatedMessage = "<html><div style='text-align: center;'>Düşmanla karşılaşıldı!<br>";
-            updatedMessage += "Düşman: " + enemy.name +"&nbsp;&nbsp;";
-            updatedMessage += "Sağlık: " + enemy.health +"<br>";
-            updatedMessage += "Saldırı: " + enemy.attack +"&nbsp;&nbsp;" ;
+            updatedMessage += "Düşman: " + enemy.getName() +"&nbsp;&nbsp;";
+            updatedMessage += "Sağlık: " + enemy.getHealth() +"<br>";
+            updatedMessage += "Saldırı: " + enemy.getAttack() +"&nbsp;&nbsp;" ;
             ultiButton.setEnabled(false);//basıldıktan sonra aktifligini kaldırmak icin
             textLabel.setText(updatedMessage);
-            if (character.health<0) {
+            if (character.getHealth()<0) {
 
                 panel.dispose();
                 try {
-                    character.img = ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png"));
+                    character.setImg(ImageIO.read(new FileInputStream("Javaprojemazgame-main/src/Images/mezar.png")));
                     repaint();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -262,10 +264,10 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 dialog.setVisible(true);
                 Gamewindow.maze.setFocusable(true);
             }
-            else if(enemy.health<=0){
+            else if(enemy.getHealth()<=0){
                 panel.dispose();
                 Gamewindow.maze.setFocusable(true);
-                enemy.health = 0;
+                enemy.setHealth(0);
                 repaint();}
 
         });
@@ -295,9 +297,9 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 }
                 else if(labirentMatrisi[k][i]==2){
                     g.drawImage(floorimg, i * 64,  k * 64,64,64, this);
-                    if(enemies.get(enemyIndex).health!=0){
-                        g.drawImage(enemies.get(enemyIndex).img, i * 64,  k * 64, 64,64,this);
-                        enemies.get(enemyIndex).coordinatex=i * 64; enemies.get(enemyIndex).coordinatey=k * 64;
+                    if(enemies.get(enemyIndex).getHealth()!=0){
+                        g.drawImage(enemies.get(enemyIndex).getImg(), i * 64,  k * 64, 64,64,this);//???
+                        enemies.get(enemyIndex).setCoordinatex(i*64); enemies.get(enemyIndex).setCoordinatey(k * 64);
                     }
                     else {
                         labirentMatrisi[k][i]=0;
@@ -322,16 +324,16 @@ public class Maze extends JPanel implements KeyListener {//mapi burda oluşturuy
                 }
             }
             try {
-                g.drawImage(characterHealthBar(character.health),character.coordinatex+5,character.coordinatey-92,54,86,this);
+                g.drawImage(characterHealthBar(character.getHealth()),character.getCoordinatex()+5,character.getCoordinatey()-92,54,86,this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            if (labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64] == 3) { //çıkışa ulaşınca tebriller yazısı çıkıyor
+            if (labirentMatrisi[character.getCoordinatey() / 64][character.getCoordinatex() / 64] == 3) { //çıkışa ulaşınca tebriller yazısı çıkıyor
                 JOptionPane.showMessageDialog(this, "Tebrikler! Çıkışa ulaştın!", "Tebrikler", JOptionPane.INFORMATION_MESSAGE, icon);
-                labirentMatrisi[character.coordinatey / 64][character.coordinatex / 64]=0;
+                labirentMatrisi[character.getCoordinatey() / 64][character.getCoordinatex() / 64]=0;
                 finish=true;
             }
-            g.drawImage(character.img,character.coordinatex,character.coordinatey,64,64,this);
+            g.drawImage(character.getImg(),character.getCoordinatex(),character.getCoordinatey(),64,64,this);
         }
     }
     public void repaint()

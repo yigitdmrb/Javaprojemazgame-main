@@ -22,14 +22,11 @@ public class Gamewindow extends JFrame {
         JMenuItem infoItem = new JMenuItem("Bilgi");
         JMenuItem storyItem = new JMenuItem("Hikaye");
         JMenuItem infoCharacterItem = new JMenuItem("Karakter statları");
-
-
         //Bilgi seçeneği
         infoItem.addActionListener(e -> JOptionPane.showMessageDialog(window, """
                      Canavarları yenmek için üzerlerine git ve saldır.  \s
                 Eğer güçlendirmeleri almazsan canavarlar seni öldürebilir.
                 Her iki saldırında bir güç toplayarak kurt vuruşu yapabilirsin.""","Bilgi",JOptionPane.INFORMATION_MESSAGE));
-
         //Hikaye Seçeneği
         storyItem.addActionListener(e -> {
             String text = """
@@ -49,7 +46,7 @@ public class Gamewindow extends JFrame {
 
 
         // Yeni Oyun Başlat seçeneği için ActionListener ekleme
-        newGameItem.addActionListener(e -> {
+       newGameItem.addActionListener(e -> {
             Gamewindow.maze.setVisible(false);
             Maze bir=resetGame();
             window.add(bir);
@@ -105,10 +102,10 @@ public class Gamewindow extends JFrame {
         maze.setFocusTraversalKeysEnabled(false);
         // Karakterin koordinatlarını eski yerlerine geri yükle
         MyCharacter character = maze.character;
-        character.health=20;
-        character.coordinatex = 64;
-        character.coordinatey = 64;
-        character.attack=2;
+        character.setHealth(20);
+        character.setCoordinatex(64);
+        character.setCoordinatey(64);
+        character.setAttack(2);
         return maze;
     }
 }
